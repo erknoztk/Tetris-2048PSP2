@@ -1,10 +1,10 @@
 ################################################################################
 #                                                                              #
 # The main program of Tetris 2048 Base Code   
-# bunu yazan hamzadır
-# babalara selamsss
-#     deneme 25 hello my friend
-#son123
+# previwe eklenecek
+# new tetrominolar
+# toplanma olayı
+# score
 ################################################################################
 
 import lib.stddraw as stddraw  # for creating an animation with user interactions
