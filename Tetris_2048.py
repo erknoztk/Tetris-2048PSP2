@@ -4,6 +4,7 @@
 # bunu yazan hamzadır
 #
 #     deneme 25 hello my friend
+#son123
 ################################################################################
 
 import lib.stddraw as stddraw  # for creating an animation with user interactions
