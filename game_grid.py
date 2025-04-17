@@ -118,10 +118,36 @@ class GameGrid:
                pos.x = blc_position.x + col
                pos.y = blc_position.y + (n_rows - 1) - row
                if self.is_inside(pos.y, pos.x):
-                  self.tile_matrix[pos.y][pos.x] = tiles_to_lock[row][col]
+                  self.place_tile_with_chain_merge(tiles_to_lock[row][col], pos.x, pos.y)
                # the game is over if any placed tile is above the game grid
                else:
                   self.game_over = True
       # return the value of the game_over flag
       return self.game_over
+
+   # chain merge
+   def place_tile_with_chain_merge(self, tile, x, y):
+      current_tile = tile
+
+      while y > 0:
+         below_tile = self.tile_matrix[y - 1][x]
+
+         if current_tile is None:
+            break
+
+         if below_tile is not None and below_tile.number == current_tile.number:
+            # Merge
+            below_tile.number *= 2
+            below_tile.update_colors()
+            self.tile_matrix[y][x] = None  # Üstteki tile silinir
+            current_tile = None  # Merge tamam, tile artık yok
+            y -= 1
+         else:
+            break
+
+      # Merge olmadıysa, aşağı kaydırma değil sabit yerleştirme yapılmalı
+      if current_tile is not None:
+         self.tile_matrix[y][x] = current_tile
+
+
 

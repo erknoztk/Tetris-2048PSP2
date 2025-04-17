@@ -40,6 +40,8 @@ class Tile:
       stddraw.setFontSize(Tile.font_size)
       stddraw.text(position.x, position.y, str(self.number))
 
+   #each number has own color
+   @staticmethod
    def get_tile_colors(number):
       color_map = {
          2: ((238, 228, 218), (119, 110, 101)),
@@ -56,4 +58,9 @@ class Tile:
       }
 
       return color_map.get(number, ((60, 58, 50), (255, 255, 255)))
+
+   def update_colors(self):
+      bg_rgb, fg_rgb = Tile.get_tile_colors(self.number)
+      self.background_color = Color(*bg_rgb)
+      self.foreground_color = Color(*fg_rgb)
 
