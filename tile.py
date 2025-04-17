@@ -1,5 +1,5 @@
 import random
-
+from point import Point
 import lib.stddraw as stddraw  # used for drawing the tiles to display them
 from lib.color import Color  # used for coloring the tiles
 
@@ -13,10 +13,10 @@ class Tile:
    font_family, font_size = "Arial", 14
 
    # A constructor that creates a tile with special color and value
-   def __init__(self):
+   def __init__(self, position=None):
       # set the number on this tile
       self.number = random.choice([2,4])
-
+      self.position= position
       #determine color for which number which color
       bg_rgb, fg_rgb = Tile.get_tile_colors(self.number)
       self.background_color = Color(*bg_rgb)
