@@ -97,7 +97,7 @@ def start():
 
 def create_tetromino():
    # the type (shape) of the tetromino is determined randomly
-   tetromino_types = ['I', 'O', 'Z']
+   tetromino_types = ['I', 'O', 'Z', 'S' , 'T', 'J', 'L']
    random_index = random.randint(0, len(tetromino_types) - 1)
    random_type = tetromino_types[random_index]
    # create and return the tetromino
