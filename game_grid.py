@@ -134,36 +134,38 @@ class GameGrid:
          tile.position.y = y # update y axis
 
    def chain_merge_column(self, x):
-      new_column = [] #temporary to hold tile (up -to down)
-
-      # 1. sort
-      for y in range(self.grid_height): # control each row y axis
-         tile = self.tile_matrix[y][x] # take each tile in x axis
-         if tile is not None:
-            new_column.append(tile) # adding to list
+    # 1. Tüm taşları yukarıdan aşağı topla
+    new_column = []
+    for y in range(self.grid_height):
+        tile = self.tile_matrix[y][x]
+        if tile is not None:
+            new_column.append(tile)
             self.tile_matrix[y][x] = None
 
-      # 2. merge mentality like 2048
-      merged_column = []  # to hold new column with merge
-      i = 0
-      while i < len(new_column): # control whole tile
-         if i + 1 < len(new_column) and new_column[i].number == new_column[i + 1].number:
-            # if two same tile, do merge
-            new_tile = new_column[i] # take first
-            new_tile.number *= 2 # merge process
-            new_tile.update_colors() # new tile with merge
-            merged_column.append(new_tile) # adding list
-            i += 2 # pass merge two tile
-         else:
-            # if not merge directly add
-            merged_column.append(new_column[i])
-            i += 1
+    # 2. Merge işlemini zincirleme şekilde yap
+    merged = True
+    while merged:
+        merged = False
+        i = 0
+        temp_column = []
+        while i < len(new_column):
+            if i + 1 < len(new_column) and new_column[i].number == new_column[i + 1].number:
+                new_tile = new_column[i]
+                new_tile.number *= 2
+                new_tile.update_colors()
+                temp_column.append(new_tile)
+                i += 2
+                merged = True
+            else:
+                temp_column.append(new_column[i])
+                i += 1
+        new_column = temp_column  # Sonuçla devam et
 
-      # 3. put new column
-      for i, tile in enumerate(merged_column):
-         self.tile_matrix[i][x] = tile # start with  y = 0
-         if tile.position is not None: # tile has position
-            tile.position.y = i # update y position
+    # 3. Yeni birleşmiş sütunu yerine koy
+    for i, tile in enumerate(new_column):
+        self.tile_matrix[i][x] = tile
+        if tile.position is not None:
+            tile.position.y = i
 
 
 
