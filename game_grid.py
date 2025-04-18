@@ -27,19 +27,15 @@ class GameGrid:
       self.box_thickness = 10 * self.line_thickness
 
    # A method for displaying the game grid
-   def display(self):
-      # clear the background to empty_cell_color
-      stddraw.clear(self.empty_cell_color)
-      # draw the game grid
-      self.draw_grid()
-      # draw the current/active tetromino if it is not None
-      # (the case when the game grid is updated)
-      if self.current_tetromino is not None:
-         self.current_tetromino.draw()
-      # draw a box around the game grid
-      self.draw_boundaries()
-      # show the resulting drawing with a pause duration = 250 ms
-      stddraw.show(250)
+   def display(self, next_tetromino=None):
+       stddraw.clear(self.empty_cell_color)
+       self.draw_grid()
+       if self.current_tetromino is not None:
+           self.current_tetromino.draw()
+       self.draw_boundaries()
+       if next_tetromino is not None:
+           self.draw_next_tetromino(next_tetromino)
+       stddraw.show(250)
 
    # A method for drawing the cells and the lines of the game grid
    def draw_grid(self):
@@ -166,6 +162,32 @@ class GameGrid:
         self.tile_matrix[i][x] = tile
         if tile.position is not None:
             tile.position.y = i
+
+   def draw_next_tetromino(self, tetromino):
+       preview_x = self.grid_width + 1
+       preview_y = self.grid_height - 4
+
+       stddraw.setFontSize(20)
+       stddraw.setPenColor(Color(255, 255, 255))
+       stddraw.text(preview_x + 1, preview_y + 3, "Next:")
+
+       tile_matrix = tetromino.tile_matrix
+       for y in range(len(tile_matrix)):
+           for x in range(len(tile_matrix[y])):
+               tile = tile_matrix[y][x]
+               if tile is not None:
+                   # Hesaplanan pozisyonu doğrudan kullan
+                   draw_x = preview_x + x
+                   draw_y = preview_y - y
+                   draw_pos = Point(draw_x, draw_y)
+
+                   tile.draw(draw_pos)  # HATA BURADA ÇÖZÜLDÜ
+
+
+
+
+
+
 
 
 
