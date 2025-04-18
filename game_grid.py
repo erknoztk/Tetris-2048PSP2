@@ -25,6 +25,7 @@ class GameGrid:
       # thickness values used for the grid lines and the grid boundaries
       self.line_thickness = 0.002
       self.box_thickness = 10 * self.line_thickness
+      self.score= 0
 
    # A method for displaying the game grid
    def display(self, next_tetromino=None):
@@ -35,6 +36,7 @@ class GameGrid:
        self.draw_boundaries()
        if next_tetromino is not None:
            self.draw_next_tetromino(next_tetromino)
+       self.draw_score()  # <-- SKOR BURADA ÇİZİLİYOR
        stddraw.show(250)
 
    # A method for drawing the cells and the lines of the game grid
@@ -148,6 +150,8 @@ class GameGrid:
             if i + 1 < len(new_column) and new_column[i].number == new_column[i + 1].number:
                 new_tile = new_column[i]
                 new_tile.number *= 2
+                self.score += new_tile.number
+
                 new_tile.update_colors()
                 temp_column.append(new_tile)
                 i += 2
@@ -183,15 +187,10 @@ class GameGrid:
 
                    tile.draw(draw_pos)  # HATA BURADA ÇÖZÜLDÜ
 
+   def draw_score(self):
+       score_x = self.grid_width + 1  # preview panel ile hizalı
+       score_y = self.grid_height - 8  # preview'un biraz altında
 
-
-
-
-
-
-
-
-
-
-
-
+       stddraw.setFontSize(20)
+       stddraw.setPenColor(Color(255, 255, 255))
+       stddraw.text(score_x + 1, score_y, f"Score: {self.score}")
