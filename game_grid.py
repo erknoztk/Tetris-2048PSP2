@@ -30,6 +30,7 @@ class GameGrid:
       self.box_thickness = 10 * self.line_thickness
       self.score= 0 # initialize score with 0
       self.paused = False # initialize with false for pause button
+      self.restart = False  # initilize with false for restart button
 
    # A method for displaying the game grid
    def display(self, next_tetromino=None):
@@ -230,13 +231,13 @@ class GameGrid:
        # Pause butonu (turuncu)
        stddraw.setPenColor(Color(255, 165, 0))  # turuncu (RGB)
        stddraw.filledRectangle(self.grid_width + 1, self.grid_height - 12, 3, 1.2)
-       stddraw.setPenColor(Color(0, 0, 0))  # siyah yazı
+       stddraw.setPenColor(Color(255, 255, 255))  #
        stddraw.text(self.grid_width + 2.5, self.grid_height - 11.4, "Pause")
 
        # Restart butonu (yeşil)
        stddraw.setPenColor(Color(0, 200, 0))  # yeşil (hafif açık ton)
        stddraw.filledRectangle(self.grid_width + 1, self.grid_height - 14.5, 3, 1.2)
-       stddraw.setPenColor(Color(0, 0, 0))  # siyah yazı
+       stddraw.setPenColor(Color(255, 255, 255))
        stddraw.text(self.grid_width + 2.5, self.grid_height - 13.9, "Restart")
 
    def check_button_clicks(self):
@@ -246,53 +247,28 @@ class GameGrid:
        x = stddraw.mouseX()
        y = stddraw.mouseY()
 
-       # Pause butonu konumu (draw_buttons ile uyumlu olmalı)
        pause_x = self.grid_width + 1
        pause_y = self.grid_height - 12
-
-       # Restart butonu konumu
        restart_y = self.grid_height - 14.5
 
-       # Pause butonuna tıklama
        if pause_x <= x <= pause_x + 3 and pause_y <= y <= pause_y + 1.2:
            self.paused = not self.paused
-           while stddraw.mousePressed():  # tıklama bırakılana kadar bekle
-               pass
-
-       # Restart butonuna tıklama
-       elif pause_x <= x <= pause_x + 3 and restart_y <= y <= restart_y + 1.2:
-           self.flash_button("restart")
            while stddraw.mousePressed():
                pass
 
-           stddraw.clear()
-           stddraw.show()
-           stddraw.close()
+       elif pause_x <= x <= pause_x + 3 and restart_y <= y <= restart_y + 1.2:
+           while stddraw.mousePressed():
+               pass
+           self.restart = True  # restart bayrağını aktif et
 
-           os.execl(sys.executable, sys.executable, *sys.argv)
+   def reset(self):
+       self.tile_matrix = np.full((self.grid_height, self.grid_width), None)
+       self.current_tetromino = None
+       self.game_over = False
+       self.paused = False
+       self.restart = False
+       self.score = 0
 
-   def flash_button(self, button_type):
-       # Koordinatlar check_button_clicks ile uyumlu olmalı
-       button_x = self.grid_width + 1
-
-       if button_type == "restart":
-           button_y = self.grid_height - 14.5
-       elif button_type == "pause":
-           button_y = self.grid_height - 12
-       else:
-           return
-
-       width = 3
-       height = 1.2
-
-       # Flaş efekti: beyaz dikdörtgen
-       stddraw.setPenColor(Color(255, 255, 255))  # beyaz
-       stddraw.filledRectangle(button_x, button_y, width, height)
-       stddraw.show(100)  # 100ms beklet
-
-       # Eski butonları geri çiz
-       self.draw_buttons()
-       stddraw.show(100)
 
 
 
