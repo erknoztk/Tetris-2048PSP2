@@ -9,7 +9,7 @@ from tetromino import Tetromino
 def start():
    grid_h, grid_w = 15, 12
 
-   
+
    canvas_h, canvas_w = 40 * grid_h, 40 * (grid_w + 5)
    stddraw.setCanvasSize(canvas_w, canvas_h)
    stddraw.setXscale(-0.5, grid_w + 4.5)
@@ -21,7 +21,7 @@ def start():
    grid = GameGrid(grid_h, grid_w)
    display_game_menu(grid_h, grid_w)
 
-   while True:  # oyun döngüsü, restart için dışta tutulur
+   while True:  #
       current_tetromino = create_tetromino()
       next_tetromino = create_tetromino()
       grid.current_tetromino = current_tetromino
@@ -34,7 +34,7 @@ def start():
             current_tetromino = create_tetromino()
             next_tetromino = create_tetromino()
             grid.current_tetromino = current_tetromino
-            continue  # restart sonrası oyun baştan başlasın
+            continue  # game reset after restart
 
          if grid.paused:
             grid.display(next_tetromino)
@@ -69,7 +69,7 @@ def start():
          grid.display(next_tetromino)
 
       if not grid.restart:
-         break  # restart edilmediyse döngüden çık
+         break
 
    print("Game over")
 

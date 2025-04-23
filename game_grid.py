@@ -196,72 +196,80 @@ class GameGrid:
        self.draw_buttons()
 
    def draw_score(self):
-       score_x = self.grid_width + 1  # preview panel ile hizalı
-       score_y = self.grid_height - 8  # preview'un biraz altında
-
+       # add score to preview page
+       score_x = self.grid_width + 1
+       score_y = self.grid_height - 8
+        # set up font and color
        stddraw.setFontSize(20)
        stddraw.setPenColor(Color(255, 255, 255))
        stddraw.text(score_x + 1, score_y, f"Score: {self.score}")
 
    def clear_full_lines(self):
-       new_matrix = []
-       total_score = 0
-       num_cols = self.grid_width
+       # when row is full
+       new_matrix = [] # matrix hold new row
+       total_score = 0 # total score which came from row total
+       num_cols = self.grid_width # column nums of row
 
+        # control each row in grid
        for row in self.tile_matrix:
-           # Satır dolu mu kontrol et
+           # if row's col full
            if all(tile is not None for tile in row):
-               # Skora her tile'ın sayısal değerini ekle
+               # do calculation for each tiles
                row_score = sum(tile.number for tile in row if tile is not None)
-               total_score += row_score
-               continue  # Bu satırı atla (temizle)
+               total_score += row_score # add current score
+               continue  # not add this row to matrix
            new_matrix.append(row)
 
-       # Temizlenen satır sayısı
+       #hold row which clear to add new empty row
        num_cleared = self.grid_height - len(new_matrix)
 
-       # En üste boş satır(lar) ekle
+       # adding new row empty
        for _ in range(num_cleared):
            new_matrix.insert(0, [None] * num_cols)
-
+        # add new matris and update grid
        self.tile_matrix = np.array(new_matrix)
+       # update current score
        self.score += total_score
 
    def draw_buttons(self):
-       # Pause butonu (turuncu)
-       stddraw.setPenColor(Color(255, 165, 0))  # turuncu (RGB)
+       # --PAUSE BUTTON-- #
+       stddraw.setPenColor(Color(255, 165, 0))  # orange in RGB
        stddraw.filledRectangle(self.grid_width + 1, self.grid_height - 12, 3, 1.2)
-       stddraw.setPenColor(Color(255, 255, 255))  #
+       stddraw.setPenColor(Color(255, 255, 255))  # font color
        stddraw.text(self.grid_width + 2.5, self.grid_height - 11.4, "Pause")
 
-       # Restart butonu (yeşil)
-       stddraw.setPenColor(Color(0, 200, 0))  # yeşil (hafif açık ton)
+       # --RESTART BUTTON-- #
+       stddraw.setPenColor(Color(0, 200, 0))  # green in RGB
        stddraw.filledRectangle(self.grid_width + 1, self.grid_height - 14.5, 3, 1.2)
-       stddraw.setPenColor(Color(255, 255, 255))
+       stddraw.setPenColor(Color(255, 255, 255)) # font color
        stddraw.text(self.grid_width + 2.5, self.grid_height - 13.9, "Restart")
 
    def check_button_clicks(self):
+       # if no click exit
        if not stddraw.mousePressed():
            return
-
+        # take location of mouse click
        x = stddraw.mouseX()
        y = stddraw.mouseY()
 
+        # set up in preview page buttons
        pause_x = self.grid_width + 1
        pause_y = self.grid_height - 12
        restart_y = self.grid_height - 14.5
 
+        # buttons action
        if pause_x <= x <= pause_x + 3 and pause_y <= y <= pause_y + 1.2:
-           self.paused = not self.paused
+           self.paused = not self.paused # open/close pause
            while stddraw.mousePressed():
                pass
 
        elif pause_x <= x <= pause_x + 3 and restart_y <= y <= restart_y + 1.2:
            while stddraw.mousePressed():
                pass
-           self.restart = True  # restart bayrağını aktif et
+           self.restart = True  #restart flag if click restart func will active
 
    def reset(self):
+       # when click restart, call instructor again and reset game grid
        self.tile_matrix = np.full((self.grid_height, self.grid_width), None)
        self.current_tetromino = None
        self.game_over = False
