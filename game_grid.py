@@ -2,6 +2,9 @@ import lib.stddraw as stddraw  # used for displaying the game grid
 from lib.color import Color  # used for coloring the game grid
 from point import Point  # used for tile positions
 import numpy as np  # fundamental Python module for scientific computing
+import os
+import sys
+
 
 # A class for modeling the game grid
 class GameGrid:
@@ -25,7 +28,8 @@ class GameGrid:
       # thickness values used for the grid lines and the grid boundaries
       self.line_thickness = 0.002
       self.box_thickness = 10 * self.line_thickness
-      self.score= 0
+      self.score= 0 # initialize score with 0
+      self.paused = False # initialize with false for pause button
 
    # A method for displaying the game grid
    def display(self, next_tetromino=None):
@@ -123,6 +127,8 @@ class GameGrid:
       for x in range(self.grid_width):
          self.chain_merge_column(x) # do 2048 mentality for each column
       # return the value of the game_over flag
+      # clear if line have limit
+      self.clear_full_lines()
       return self.game_over
 
    # chain merge
@@ -185,7 +191,8 @@ class GameGrid:
                    draw_y = preview_y - y
                    draw_pos = Point(draw_x, draw_y)
 
-                   tile.draw(draw_pos)  # HATA BURADA ÇÖZÜLDÜ
+                   tile.draw(draw_pos)
+       self.draw_buttons()
 
    def draw_score(self):
        score_x = self.grid_width + 1  # preview panel ile hizalı
@@ -194,3 +201,99 @@ class GameGrid:
        stddraw.setFontSize(20)
        stddraw.setPenColor(Color(255, 255, 255))
        stddraw.text(score_x + 1, score_y, f"Score: {self.score}")
+
+   def clear_full_lines(self):
+       new_matrix = []
+       total_score = 0
+       num_cols = self.grid_width
+
+       for row in self.tile_matrix:
+           # Satır dolu mu kontrol et
+           if all(tile is not None for tile in row):
+               # Skora her tile'ın sayısal değerini ekle
+               row_score = sum(tile.number for tile in row if tile is not None)
+               total_score += row_score
+               continue  # Bu satırı atla (temizle)
+           new_matrix.append(row)
+
+       # Temizlenen satır sayısı
+       num_cleared = self.grid_height - len(new_matrix)
+
+       # En üste boş satır(lar) ekle
+       for _ in range(num_cleared):
+           new_matrix.insert(0, [None] * num_cols)
+
+       self.tile_matrix = np.array(new_matrix)
+       self.score += total_score
+
+   def draw_buttons(self):
+       # Pause butonu (turuncu)
+       stddraw.setPenColor(Color(255, 165, 0))  # turuncu (RGB)
+       stddraw.filledRectangle(self.grid_width + 1, self.grid_height - 12, 3, 1.2)
+       stddraw.setPenColor(Color(0, 0, 0))  # siyah yazı
+       stddraw.text(self.grid_width + 2.5, self.grid_height - 11.4, "Pause")
+
+       # Restart butonu (yeşil)
+       stddraw.setPenColor(Color(0, 200, 0))  # yeşil (hafif açık ton)
+       stddraw.filledRectangle(self.grid_width + 1, self.grid_height - 14.5, 3, 1.2)
+       stddraw.setPenColor(Color(0, 0, 0))  # siyah yazı
+       stddraw.text(self.grid_width + 2.5, self.grid_height - 13.9, "Restart")
+
+   def check_button_clicks(self):
+       if not stddraw.mousePressed():
+           return
+
+       x = stddraw.mouseX()
+       y = stddraw.mouseY()
+
+       # Pause butonu konumu (draw_buttons ile uyumlu olmalı)
+       pause_x = self.grid_width + 1
+       pause_y = self.grid_height - 12
+
+       # Restart butonu konumu
+       restart_y = self.grid_height - 14.5
+
+       # Pause butonuna tıklama
+       if pause_x <= x <= pause_x + 3 and pause_y <= y <= pause_y + 1.2:
+           self.paused = not self.paused
+           while stddraw.mousePressed():  # tıklama bırakılana kadar bekle
+               pass
+
+       # Restart butonuna tıklama
+       elif pause_x <= x <= pause_x + 3 and restart_y <= y <= restart_y + 1.2:
+           self.flash_button("restart")
+           while stddraw.mousePressed():
+               pass
+
+           stddraw.clear()
+           stddraw.show()
+           stddraw.close()
+
+           os.execl(sys.executable, sys.executable, *sys.argv)
+
+   def flash_button(self, button_type):
+       # Koordinatlar check_button_clicks ile uyumlu olmalı
+       button_x = self.grid_width + 1
+
+       if button_type == "restart":
+           button_y = self.grid_height - 14.5
+       elif button_type == "pause":
+           button_y = self.grid_height - 12
+       else:
+           return
+
+       width = 3
+       height = 1.2
+
+       # Flaş efekti: beyaz dikdörtgen
+       stddraw.setPenColor(Color(255, 255, 255))  # beyaz
+       stddraw.filledRectangle(button_x, button_y, width, height)
+       stddraw.show(100)  # 100ms beklet
+
+       # Eski butonları geri çiz
+       self.draw_buttons()
+       stddraw.show(100)
+
+
+
+

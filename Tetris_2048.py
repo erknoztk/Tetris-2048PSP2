@@ -28,6 +28,13 @@ def start():
    display_game_menu(grid_h, grid_w)
 
    while True:
+
+      grid.check_button_clicks()
+
+      if grid.paused:
+         grid.display(next_tetromino)
+         continue  # game stop
+
       if stddraw.hasNextKeyTyped():
          key_typed = stddraw.nextKeyTyped()
          if key_typed == "left":
@@ -111,7 +118,6 @@ def shake_effect(grid, current_tetromino, next_tetromino):
       stddraw.show(20)
 
    stddraw.setXscale(-0.5, grid.grid_width + 4.5)
-
 
 if __name__ == '__main__':
    start()
