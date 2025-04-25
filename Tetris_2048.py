@@ -57,27 +57,27 @@ def start():
                 stddraw.clearKeysTyped()
             # ————————
 
-            # Otomatik düşür
+            # autonom move for tetromino and game
             success = current.move("down", grid)
             if not success:
                 tiles, pos = current.get_min_bounded_tile_matrix(True)
                 if grid.update_grid(tiles, pos):
-                    # GAME OVER olduysa, özel bir döngüyle ekran+tıklama bekle
+                    # if gameover true show GAMEOVER screen
                     grid.game_over = True
                     while True:
                         grid.game_over_screen()
-                        grid.check_game_over_clicks() #düzeltilecek
-                        # Restart’e basıldı mı?
+                        grid.check_game_over_clicks()
+                        # click restart
                         if grid.restart:
                             break
-                        # sys.exit() zaten direkt programı kapatır
-                    break  # maç döngüsünden çık
-                # Oyuna devam
+
+                    break  # exit game
+                # game not finish
                 current = nxt
                 nxt     = create_tetromino()
                 grid.current_tetromino = current
 
-            # Her adımda yeniden çiz
+            # draw tetromino each move
             grid.display(nxt)
 
         # Buraya geldiğimizde ya Restart basıldı, ya da exit yapıldı
