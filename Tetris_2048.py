@@ -7,71 +7,85 @@ from game_grid import GameGrid
 from tetromino import Tetromino
 
 def start():
-   grid_h, grid_w = 15, 12
+    grid_h, grid_w = 15, 12
+    canvas_h, canvas_w = 40*grid_h, 40*(grid_w+5)
+    stddraw.setCanvasSize(canvas_w, canvas_h)
+    stddraw.setXscale(-0.5, grid_w+4.5)
+    stddraw.setYscale(-0.5, grid_h-0.5)
 
+    Tetromino.grid_height = grid_h
+    Tetromino.grid_width  = grid_w
 
-   canvas_h, canvas_w = 40 * grid_h, 40 * (grid_w + 5)
-   stddraw.setCanvasSize(canvas_w, canvas_h)
-   stddraw.setXscale(-0.5, grid_w + 4.5)
-   stddraw.setYscale(-0.5, grid_h - 0.5)
+    grid = GameGrid(grid_h, grid_w)
+    display_game_menu(grid_h, grid_w)
 
-   Tetromino.grid_height = grid_h
-   Tetromino.grid_width = grid_w
+    # Dış döngü: Kullanıcı restart yapana veya exit diyene kadar devam eder
+    while True:
+        # Her maç başında sıfırla
+        grid.reset()
+        current = create_tetromino()
+        nxt     = create_tetromino()
+        grid.current_tetromino = current
 
-   grid = GameGrid(grid_h, grid_w)
-   display_game_menu(grid_h, grid_w)
+        # Maç döngüsü
+        while True:
+            # Pause/Restart butonları (oyun içi)
+            grid.check_button_clicks()
+            if grid.restart:
+                # Restart tuşuna basıldı: bu maç bitti, dış döngü başa dönsün
+                break
 
-   while True:  #
-      current_tetromino = create_tetromino()
-      next_tetromino = create_tetromino()
-      grid.current_tetromino = current_tetromino
+            # Eğer paused durumdaysak sadece çiz
+            if grid.paused:
+                grid.display(nxt)
+                continue
 
-      while not grid.game_over:
-         grid.check_button_clicks()
+            # — Klavye kontrolleri —
+            if stddraw.hasNextKeyTyped():
+                key = stddraw.nextKeyTyped()
+                if key == "left":
+                    current.move("left", grid)
+                elif key == "right":
+                    current.move("right", grid)
+                elif key == "down":
+                    current.move("down", grid)
+                elif key == "up":
+                    current.rotate(clockwise=True, game_grid=grid)
+                elif key == "space":
+                    current.drop_bottom(grid)
+                    shake_effect(grid, current, nxt)
+                stddraw.clearKeysTyped()
+            # ————————
 
-         if grid.restart:
-            grid.reset()
-            current_tetromino = create_tetromino()
-            next_tetromino = create_tetromino()
-            grid.current_tetromino = current_tetromino
-            continue  # game reset after restart
+            # Otomatik düşür
+            success = current.move("down", grid)
+            if not success:
+                tiles, pos = current.get_min_bounded_tile_matrix(True)
+                if grid.update_grid(tiles, pos):
+                    # GAME OVER olduysa, özel bir döngüyle ekran+tıklama bekle
+                    grid.game_over = True
+                    while True:
+                        grid.draw_game_over()
+                        grid.check_game_over_clicks()
+                        # Restart’e basıldı mı?
+                        if grid.restart:
+                            break
+                        # sys.exit() zaten direkt programı kapatır
+                    break  # maç döngüsünden çık
+                # Oyuna devam
+                current = nxt
+                nxt     = create_tetromino()
+                grid.current_tetromino = current
 
-         if grid.paused:
-            grid.display(next_tetromino)
-            continue
+            # Her adımda yeniden çiz
+            grid.display(nxt)
 
-         if stddraw.hasNextKeyTyped():
-            key_typed = stddraw.nextKeyTyped()
-            if key_typed == "left":
-               current_tetromino.move("left", grid)
-            elif key_typed == "right":
-               current_tetromino.move("right", grid)
-            elif key_typed == "down":
-               current_tetromino.move("down", grid)
-            elif key_typed == "up":
-               current_tetromino.rotate(clockwise=True, game_grid=grid)
-            elif key_typed == "space":
-               current_tetromino.drop_bottom(grid)
-               shake_effect(grid, current_tetromino, next_tetromino)
+        # Buraya geldiğimizde ya Restart basıldı, ya da exit yapıldı
+        if not grid.restart:
+            # Exit’e basıldı: döngüyü kır, program sonlansın
+            break
 
-            stddraw.clearKeysTyped()
-
-         success = current_tetromino.move("down", grid)
-         if not success:
-            tiles, pos = current_tetromino.get_min_bounded_tile_matrix(True)
-            game_over = grid.update_grid(tiles, pos)
-            if game_over:
-               break
-            current_tetromino = next_tetromino
-            next_tetromino = create_tetromino()
-            grid.current_tetromino = current_tetromino
-
-         grid.display(next_tetromino)
-
-      if not grid.restart:
-         break
-
-   print("Game over")
+    print("Game over")
 
 
 def create_tetromino():

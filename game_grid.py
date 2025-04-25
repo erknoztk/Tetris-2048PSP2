@@ -5,6 +5,7 @@ import numpy as np  # fundamental Python module for scientific computing
 import os
 import sys
 
+HIGH_SCORE_FILE = "highscore.txt"
 
 # A class for modeling the game grid
 class GameGrid:
@@ -31,6 +32,11 @@ class GameGrid:
       self.score= 0 # initialize score with 0
       self.paused = False # initialize with false for pause button
       self.restart = False  # initilize with false for restart button
+      self.score = 0
+      self.restart = False
+      self.game_over = False
+      # High score’u yükle
+      self.high_score = self.load_high_score()
 
    # A method for displaying the game grid
    def display(self, next_tetromino=None):
@@ -276,6 +282,77 @@ class GameGrid:
        self.paused = False
        self.restart = False
        self.score = 0
+   def load_high_score(self):
+        if os.path.exists(HIGH_SCORE_FILE):
+            try:
+                with open(HIGH_SCORE_FILE, "r") as f:
+                    return int(f.read().strip())
+            except:
+                return 0
+        else:
+            return 0
+
+   def save_high_score(self):
+        with open(HIGH_SCORE_FILE, "w") as f:
+            f.write(str(self.high_score))
+
+    # … diğer metodlar …
+
+   def game_over_screen(self):
+        """Game Over ekranını gösterir, tıklamaları bekler."""
+        btn_w, btn_h = 4, 1.5
+        btn_y = self.grid_height/2 - 4
+        x1 = self.grid_width/2 - btn_w - 1  # Restart x
+        x2 = self.grid_width/2 + 1           # Exit x
+
+        while True:
+            # --- Çizim ---
+            stddraw.clear(Color(50, 50, 50))
+            stddraw.setFontSize(60)
+            stddraw.setPenColor(Color(200, 0, 0))
+            stddraw.text(self.grid_width/2, self.grid_height/2 + 4, "GAME OVER")
+
+            stddraw.setFontSize(30)
+            stddraw.setPenColor(Color(255, 255, 255))
+            stddraw.text(self.grid_width/2, self.grid_height/2 + 1.5, f"Score: {self.score}")
+            if self.score > self.high_score:
+                self.high_score = self.score
+                self.save_high_score()
+            stddraw.text(self.grid_width/2, self.grid_height/2 - 0.5,
+                         f"High Score: {self.high_score}")
+
+            # Restart butonu
+            stddraw.setPenColor(Color(0, 200, 0))
+            stddraw.filledRectangle(x1, btn_y, btn_w, btn_h)
+            stddraw.setPenColor(Color(255, 255, 255))
+            stddraw.setFontSize(20)
+            stddraw.text(x1 + btn_w/2, btn_y + btn_h/2, "Restart")
+
+            # Exit butonu
+            stddraw.setPenColor(Color(200, 0, 0))
+            stddraw.filledRectangle(x2, btn_y, btn_w, btn_h)
+            stddraw.setPenColor(Color(255, 255, 255))
+            stddraw.text(x2 + btn_w/2, btn_y + btn_h/2, "Exit")
+
+            # Ekranı göster ve olayları işle (100 ms bekle)
+            stddraw.show(100)
+
+            # --- Tıklama kontrolü ---
+            if stddraw.mousePressed():
+                mx, my = stddraw.mouseX(), stddraw.mouseY()
+                # Restart alanı
+                if x1 <= mx <= x1 + btn_w and btn_y <= my <= btn_y + btn_h:
+                    # tıklamayı bırakana kadar bekle
+                    while stddraw.mousePressed():
+                        pass
+                    self.restart = True
+                    return
+                # Exit alanı
+                if x2 <= mx <= x2 + btn_w and btn_y <= my <= btn_y + btn_h:
+                    sys.exit()
+                # eğer başka yere tıkladıysa, tıklamayı bırakana kadar bekle
+                while stddraw.mousePressed():
+                    pass
 
 
 
