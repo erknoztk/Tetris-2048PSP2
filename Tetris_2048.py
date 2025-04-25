@@ -65,8 +65,8 @@ def start():
                     # GAME OVER olduysa, özel bir döngüyle ekran+tıklama bekle
                     grid.game_over = True
                     while True:
-                        grid.draw_game_over()
-                        grid.check_game_over_clicks()
+                        grid.game_over_screen()
+                        grid.check_game_over_clicks() #düzeltilecek
                         # Restart’e basıldı mı?
                         if grid.restart:
                             break
