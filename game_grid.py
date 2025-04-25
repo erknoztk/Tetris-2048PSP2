@@ -50,7 +50,7 @@ class GameGrid:
            self.draw_next_tetromino(next_tetromino)
         # draw score in preview
        self.draw_score()
-       stddraw.show(250)
+       stddraw.show(2)
 
    # A method for drawing the cells and the lines of the game grid
    def draw_grid(self):

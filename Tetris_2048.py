@@ -66,7 +66,7 @@ def start():
                     grid.game_over = True
                     while True:
                         grid.game_over_screen()
-                        grid.check_game_over_clicks()
+                       
                         # click restart
                         if grid.restart:
                             break
