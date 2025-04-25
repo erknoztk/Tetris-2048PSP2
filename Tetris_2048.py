@@ -101,7 +101,7 @@ def display_game_menu(grid_height, grid_width):
    stddraw.clear(background_color)
    current_dir = os.path.dirname(os.path.realpath(__file__))
    img_file = current_dir + "/images/menu_image.png"
-   img_center_x, img_center_y = (grid_width - 1) / 2, grid_height - 7
+   img_center_x, img_center_y = (grid_width +3.5) / 2, grid_height - 7
    image_to_display = Picture(img_file)
    stddraw.picture(image_to_display, img_center_x, img_center_y)
 
