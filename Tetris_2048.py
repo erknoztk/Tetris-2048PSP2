@@ -21,7 +21,7 @@ def start():
 
     # Dış döngü: Kullanıcı restart yapana veya exit diyene kadar devam eder
     while True:
-        # Her maç başında sıfırla
+        # beginning of each game reset
         grid.reset()
         current = create_tetromino()
         nxt     = create_tetromino()
@@ -126,13 +126,14 @@ def display_game_menu(grid_height, grid_width):
 
 def shake_effect(grid, current_tetromino, next_tetromino):
    for i in range(5):
-      stddraw.setXscale(-0.5 + 0.1, grid.grid_width + 4.5 + 0.1)  # preview panel dahil
-      stddraw.clear()
-      grid.draw()
-      current_tetromino.draw()
-      grid.draw_next_tetromino(next_tetromino)
-      stddraw.show(20)
-
+     # shift the X-scale to the right to simulate shake
+      stddraw.setXscale(-0.5 + 0.1, grid.grid_width + 4.5 + 0.1)  # include preview
+      stddraw.clear() #clear screen
+      grid.draw() # draw current state of the grid
+      current_tetromino.draw() # draw the tetromino which fall
+      grid.draw_next_tetromino(next_tetromino) #draw next tetromino
+      stddraw.show(20) # show the frame with slight delay for visibility
+    # do for same thing when shift he X-scale to the right
       stddraw.setXscale(-0.5 - 0.1, grid.grid_width + 4.5 - 0.1)
       stddraw.clear()
       grid.draw()

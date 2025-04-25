@@ -208,7 +208,9 @@ class Tetromino:
          for col in range(n):
             tile = self.tile_matrix[row][col]
             if tile is not None:
-               pos = self.get_cell_position(row, col)
+               pos = self.get_cell_position(row, col) # right place in game grid
+               #CONTROL --> if there is a tile which position in outside or any conflict
+               # shifting operation until 'can be placed'
                if (pos.x < 0 or pos.x >= Tetromino.grid_width or
                        pos.y < 0 or pos.y >= Tetromino.grid_height or
                        game_grid.is_occupied(pos.y, pos.x)):
@@ -216,25 +218,29 @@ class Tetromino:
       return True
 
    def rotate(self, clockwise=True, game_grid=None):
-      n_rows = len(self.tile_matrix)
-      n_cols = len(self.tile_matrix[0])
+      n_rows = len(self.tile_matrix) #nums of row
+      n_cols = len(self.tile_matrix[0]) #nums of col
 
       if clockwise:
+         # for rotate, create emtpy matrix
          rotated = [[None for _ in range(n_rows)] for _ in range(n_cols)]
          for r in range(n_rows):
             for c in range(n_cols):
+               # set up cells for new positions
                rotated[c][n_rows - 1 - r] = self.tile_matrix[r][c]
       else:
+         # for counter clock wise
          rotated = [[None for _ in range(n_rows)] for _ in range(n_cols)]
          for r in range(n_rows):
             for c in range(n_cols):
                rotated[n_cols - 1 - c][r] = self.tile_matrix[r][c]
 
+      # old matrix and X positions saving ( if rotate have error, comeback old positions )
       old_matrix = self.tile_matrix
       old_x = self.bottom_left_cell.x
-
+      # change tile matrix with rotated matrix
       self.tile_matrix = rotated
-
+      # check new matrix rotate successfully
       if game_grid is not None and self.can_be_placed(game_grid):
          return
 
