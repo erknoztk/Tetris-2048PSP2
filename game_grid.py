@@ -147,7 +147,7 @@ class GameGrid:
          tile.position.y = y # update y axis
 
    def chain_merge_column(self, x):
-    # 1. Tüm taşları yukarıdan aşağı topla
+    # calculate column for each col 1-) start with neighboor tile
     new_column = []
     for y in range(self.grid_height):
         tile = self.tile_matrix[y][x]
@@ -155,7 +155,7 @@ class GameGrid:
             new_column.append(tile)
             self.tile_matrix[y][x] = None
 
-    # 2. Merge işlemini zincirleme şekilde yap
+    # do chain merge
     merged = True
     while merged:
         merged = False
@@ -174,16 +174,16 @@ class GameGrid:
             else:
                 temp_column.append(new_column[i])
                 i += 1
-        new_column = temp_column  # Sonuçla devam et
+        new_column = temp_column  # contuniu new column lin
 
-    # 3. Yeni birleşmiş sütunu yerine koy
+    # again calculate column
     for i, tile in enumerate(new_column):
         self.tile_matrix[i][x] = tile
         if tile.position is not None:
             tile.position.y = i
 
    def draw_next_tetromino(self, tetromino):
-       # determin preview screen X and Y coordinates
+       # determine preview screen X and Y coordinates
        preview_x = self.grid_width + 1
        preview_y = self.grid_height - 4
 
@@ -303,17 +303,17 @@ class GameGrid:
         with open(HIGH_SCORE_FILE, "w") as f:
             f.write(str(self.high_score))
 
-    # … diğer metodlar …
+    # … other methods …
 
    def game_over_screen(self):
-        """Game Over ekranını gösterir, tıklamaları bekler."""
+        """Game Over screen."""
         btn_w, btn_h = 4, 1.5
         btn_y = self.grid_height/2 - 4
         x1 = self.grid_width/2 - btn_w - 1  # Restart x
         x2 = self.grid_width/2 + 1           # Exit x
 
         while True:
-            # --- Çizim ---
+            # ---Draw game over page---
             stddraw.clear(Color(50, 50, 50))
             stddraw.setFontSize(60)
             stddraw.setPenColor(Color(200, 0, 0))
@@ -328,36 +328,36 @@ class GameGrid:
             stddraw.text(self.grid_width/2, self.grid_height/2 - 0.5,
                          f"High Score: {self.high_score}")
 
-            # Restart butonu
+            # Restart button
             stddraw.setPenColor(Color(0, 200, 0))
             stddraw.filledRectangle(x1, btn_y, btn_w, btn_h)
             stddraw.setPenColor(Color(255, 255, 255))
             stddraw.setFontSize(20)
             stddraw.text(x1 + btn_w/2, btn_y + btn_h/2, "Restart")
 
-            # Exit butonu
+            # Exit button
             stddraw.setPenColor(Color(200, 0, 0))
             stddraw.filledRectangle(x2, btn_y, btn_w, btn_h)
             stddraw.setPenColor(Color(255, 255, 255))
             stddraw.text(x2 + btn_w/2, btn_y + btn_h/2, "Exit")
 
-            # Ekranı göster ve olayları işle (100 ms bekle)
+            # show screen
             stddraw.show(100)
 
-            # --- Tıklama kontrolü ---
+            # --- Click Control ---
             if stddraw.mousePressed():
                 mx, my = stddraw.mouseX(), stddraw.mouseY()
-                # Restart alanı
+                # Restart button view
                 if x1 <= mx <= x1 + btn_w and btn_y <= my <= btn_y + btn_h:
-                    # tıklamayı bırakana kadar bekle
+                    # check click
                     while stddraw.mousePressed():
                         pass
                     self.restart = True
                     return
-                # Exit alanı
+                # Exit button view
                 if x2 <= mx <= x2 + btn_w and btn_y <= my <= btn_y + btn_h:
                     sys.exit()
-                # eğer başka yere tıkladıysa, tıklamayı bırakana kadar bekle
+
                 while stddraw.mousePressed():
                     pass
 

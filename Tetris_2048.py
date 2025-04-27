@@ -19,7 +19,7 @@ def start():
     grid = GameGrid(grid_h, grid_w)
     display_game_menu(grid_h, grid_w)
 
-    # Dış döngü: Kullanıcı restart yapana veya exit diyene kadar devam eder
+
     while True:
         # beginning of each game reset
         grid.reset()
@@ -27,20 +27,20 @@ def start():
         nxt     = create_tetromino()
         grid.current_tetromino = current
 
-        # Maç döngüsü
+        # game update 
         while True:
-            # Pause/Restart butonları (oyun içi)
+            # Pause/Restart buttons
             grid.check_button_clicks()
             if grid.restart:
-                # Restart tuşuna basıldı: bu maç bitti, dış döngü başa dönsün
+                # in gamegrid restart button
                 break
 
-            # Eğer paused durumdaysak sadece çiz
+            # if in pause just draw and show
             if grid.paused:
                 grid.display(nxt)
                 continue
 
-            # — Klavye kontrolleri —
+            # — Keyboard control—
             if stddraw.hasNextKeyTyped():
                 key = stddraw.nextKeyTyped()
                 if key == "left":
@@ -80,9 +80,9 @@ def start():
             # draw tetromino each move
             grid.display(nxt)
 
-        # Buraya geldiğimizde ya Restart basıldı, ya da exit yapıldı
+        # game over screen control
         if not grid.restart:
-            # Exit’e basıldı: döngüyü kır, program sonlansın
+            # for exit
             break
 
     print("Game over")
